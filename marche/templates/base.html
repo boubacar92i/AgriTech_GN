@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriTech GN</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <style>
+        .hover-shadow:hover {
+            transform: translateY(-5px);
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.12) !important;
+        }
+
+        /* BADGE FLOTTANT UTILISATEUR */
+        #zone-bienvenue-exclusif {
+            display: inline-flex;
+            align-items: center;
+            background-color: white; /* Fond blanc comme sur l'image */
+            padding: 5px 18px;
+            border-radius: 30px; /* Forme pilule */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15); /* Ombre légère pour le relief */
+            margin-top: 10px;
+        }
+
+        #zone-bienvenue-exclusif i {
+            color: #157347; /* Vert pour l'icône */
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        #zone-bienvenue-exclusif span {
+            color: #157347; /* Vert pour le texte */
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        #zone-bienvenue-exclusif strong {
+            text-transform: uppercase; /* Nom en majuscules */
+        }
+        
+        /* STYLE DU CHATBOT */
+        #chatbot-window {
+            width: 350px;
+            max-height: 500px;
+            z-index: 2000;
+            display: none;
+            bottom: 90px;
+            right: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        #chat-content {
+            height: 300px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+
+        .chat-msg {
+            padding: 8px 12px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            max-width: 80%;
+            font-size: 0.9rem;
+        }
+
+        .msg-bot { background: #e9ecef; color: #333; align-self: flex-start; }
+        .msg-user { background: #198754; color: white; align-self: flex-end; }
+
+        #chat-toggle-btn {
+            width: 60px;
+            height: 60px;
+            z-index: 2000;
+            bottom: 20px;
+            right: 20px;
+            transition: transform 0.3s;
+        }
+
+        #chat-toggle-btn:hover { transform: scale(1.1); }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success shadow-sm py-3">
+        <div class="container">
+            <div class="d-flex flex-column align-items-start">
+                <a class="navbar-brand fw-bold mb-0 fs-4" href="{% url 'index' %}">🌿 AGRITECH GN</a>
+                {% if user.is_authenticated %}
+                <div id="zone-bienvenue-exclusif">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Bienvenue, <strong>{{ user.username }}</strong></span>
+                </div>
+                {% endif %}
+            </div>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto align-items-center">
+                    <a class="nav-link text-white me-4 position-relative" href="{% url 'voir_panier' %}">
+                        <i class="bi bi-cart3 fs-4"></i>
+                        {% if nb_articles_panier > 0 %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill cart-badge">
+                            {{ nb_articles_panier }}
+                        </span>
+                        {% endif %}
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        {% if user.profile.role == 'AGRI' %}
+                        <a class="nav-link text-white me-3 fw-bold" href="{% url 'dashboard_agri' %}">
+                            <i class="bi bi-grid-1x2-fill me-1"></i> Mon Espace
+                        </a>
+                        {% endif %}
+
+                        {% if user.is_staff %}
+                        <a class="btn btn-warning btn-sm me-3 fw-bold text-dark px-3 rounded-pill" href="/admin/">
+                            <i class="bi bi-shield-lock"></i> Admin
+                        </a>
+                        {% endif %}
+
+                        <a class="nav-link text-white me-3" href="{% url 'mon_profil' %}">Profil</a>
+
+                        <form action="{% url 'logout' %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-light btn-sm rounded-pill px-4">Déconnexion</button>
+                        </form>
+                    {% else %}
+                        <a class="nav-link text-white me-3" href="{% url 'login' %}">Connexion</a>
+                        <a class="btn btn-light text-success fw-bold rounded-pill px-4" href="{% url 'inscription' %}">S'inscrire</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-3">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm rounded-4" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="container mt-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <button id="chat-toggle-btn" class="btn btn-success rounded-circle position-fixed shadow-lg" onclick="toggleChat()">
+        <i class="bi bi-chat-dots-fill fs-3"></i>
+    </button>
+
+    <div id="chatbot-window" class="card position-fixed border-0 overflow-hidden">
+        <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+            <span class="fw-bold"><i class="bi bi-robot me-2"></i> Expert AgriTech</span>
+            <button class="btn-close btn-close-white btn-sm" onclick="toggleChat()"></button>
+        </div>
+        <div id="chat-content" class="card-body d-flex flex-column p-3">
+            <div class="chat-msg msg-bot">
+                Bonjour ! Je connais AgriTech GN de A à Z. Posez-moi vos questions.
+            </div>
+
+            <div id="chat-loading" class="chat-msg msg-bot d-none">
+                <div class="spinner-border spinner-border-sm text-success" role="status">
+                    <span class="visually-hidden">Réflexion...</span>
+                </div>
+                <span class="ms-2">L'expert réfléchit...</span>
+            </div>
+        </div>
+        <div class="card-footer bg-white">
+            <div class="input-group">
+                <input type="text" id="chat-input" class="form-control border-0 bg-light rounded-pill-start" placeholder="Votre question...">
+                <button class="btn btn-success rounded-pill-end" onclick="sendToBot()">
+                    <i class="bi bi-send"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            const win = document.getElementById('chatbot-window');
+            win.style.display = (win.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function sendToBot() {
+            const input = document.getElementById('chat-input');
+            const loading = document.getElementById('chat-loading');
+            const content = document.getElementById('chat-content');
+            const message = input.value.trim();
+            
+            if (message === "") return;
+
+            // 1. Afficher le message utilisateur
+            appendMessage('user', message);
+            input.value = "";
+
+            // 2. Afficher l'indicateur de chargement et le déplacer en bas
+            loading.classList.remove('d-none');
+            content.appendChild(loading); // On le remet à la fin pour qu'il soit toujours en bas
+            content.scrollTop = content.scrollHeight;
+
+            // 3. Appel à l'API Django
+            fetch(`/chatbot-api/?message=${encodeURIComponent(message)}`)
+                .then(response => response.json())
+                .then(data => {
+                    loading.classList.add('d-none'); // Masquer le chargement
+                    appendMessage('bot', data.reply);
+                })
+                .catch(error => {
+                    loading.classList.add('d-none');
+                    appendMessage('bot', "Désolé, j'ai un souci de connexion.");
+                });
+        }
+
+        function appendMessage(sender, text) {
+            const content = document.getElementById('chat-content');
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `chat-msg msg-${sender}`;
+            msgDiv.innerText = text;
+            content.appendChild(msgDiv);
+            content.scrollTop = content.scrollHeight;
+        };
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="bg-success text-white py-5 mb-5 shadow-sm" style="background: linear-gradient(135deg, #198754 0%, #0d5a35 100%); border-radius: 20px;">
+    <div class="container py-4 text-center">
+        <h1 class="display-4 fw-bold mb-3">Le Marché Agricole de Guinée</h1>
+        <p class="lead mb-4 opacity-75">Directement des champs de nos régions à votre table.</p>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form action="{% url 'index' %}" method="GET" class="d-flex shadow-lg rounded-pill bg-white p-1">
+                    <input type="text" name="search" class="form-control border-0 rounded-pill px-4" placeholder="Rechercher un produit..." value="{{ request.GET.search }}">
+                    <button type="submit" class="btn btn-success rounded-pill px-4 fw-bold">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold"><i class="bi bi-basket2-fill text-success"></i> Produits Frais</h2>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        {% for produit in produits %}
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm hover-shadow transition-all" style="border-radius: 15px; overflow: hidden;">
+                <div style="height: 200px; overflow: hidden;">
+                    {% if produit.image %}
+                        <img src="{{ produit.image.url }}" class="card-img-top h-100 w-100" style="object-fit: cover;">
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">{{ produit.nom }}</h5>
+                    <p class="text-muted small"><i class="bi bi-geo-alt-fill"></i> {{ produit.zone_production }}</p>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-success fw-bold">{{ produit.prix|intcomma }} GNF</span>
+                        <span class="badge bg-light text-dark border">Stock: {{ produit.quantite_stock }}</span>
+                    </div>
+                </div>
+                <div class="card-footer bg-white border-0 d-grid pb-3">
+                    <a href="{% url 'ajouter_au_panier' produit.id %}" class="btn btn-success rounded-pill">Ajouter au panier</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

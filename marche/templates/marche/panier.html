@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="fw-bold mb-4"><i class="bi bi-cart3 text-success"></i> Mon Panier</h2>
+
+    {% if articles_panier %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Produit</th>
+                                <th>Quantité</th>
+                                <th>Prix</th>
+                                <th>Total</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in articles_panier %}
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        {% if item.produit.photo %}
+                                            <img src="{{ item.produit.photo.url }}" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                        {% endif %}
+                                        <span class="fw-bold">{{ item.produit.nom }}</span>
+                                    </div>
+                                </td>
+                                <td>{{ item.quantite }}</td>
+                                <td>{{ item.produit.prix|intcomma }} GNF</td>
+                                <td class="fw-bold">{{ item.sous_total|intcomma }} GNF</td>
+                                <td>
+                                    <a href="{% url 'supprimer_du_panier' item.produit.id %}" class="text-danger"><i class="bi bi-trash"></i></a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 bg-light">
+                <h4 class="fw-bold">Résumé</h4>
+                <hr>
+                <div class="d-flex justify-content-between mb-3">
+                    <span>Total à payer</span>
+                    <span class="fw-bold fs-4 text-success">{{ total|intcomma }} GNF</span>
+                </div>
+                <div class="d-grid">
+                    <a href="{% url 'commander' %}" class="btn btn-success btn-lg">Finaliser la commande</a>
+                    <a href="{% url 'index' %}" class="btn btn-link text-muted mt-2">Continuer mes achats</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="bi bi-cart-x display-1 text-muted"></i>
+        <p class="fs-4 mt-3">Votre panier est vide.</p>
+        <a href="{% url 'index' %}" class="btn btn-success">Retourner au marché</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load humanize %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow border-0 p-4">
+                <h3 class="fw-bold text-success mb-4">Finaliser ma commande</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Téléphone de contact</label>
+                        <input type="text" name="telephone" class="form-control" placeholder="6XX XX XX XX" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Adresse précise de livraison</label>
+                        <textarea name="adresse" class="form-control" rows="3" placeholder="Ex: Dixinn, près de l'université..." required></textarea>
+                    </div>
+                    <div class="alert alert-info">
+                        Total à payer à la livraison : <strong>{{ total|intcomma }} GNF</strong>
+                    </div>
+                    <button type="submit" class="btn btn-success btn-lg w-100 mt-3">Confirmer l'achat</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

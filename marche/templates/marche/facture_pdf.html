@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Facture #{{ commande.id }} - AgriTech GN</title>
+    <style>
+        /* Configuration de la page PDF */
+        @page {
+            size: A4;
+            margin: 2cm;
+        }
+
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 12px;
+            color: #333;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* En-tête */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 2px solid #157347;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        .company-logo {
+            color: #157347;
+            font-size: 28px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        .invoice-title {
+            text-align: left;
+            color: #666;
+        }
+
+        .invoice-title h1 {
+            margin: 0;
+            font-size: 20px;
+            color: #333;
+        }
+
+        /* Sections d'informations (Client & Vendeur) */
+        .info-section {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+
+        .info-box {
+            width: 45%;
+            display: inline-block;
+            vertical-align: top;
+        }
+
+        .section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #157347;
+            font-weight: bold;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Tableau des produits */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        .items-table th {
+            background-color: #157347;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        .items-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .text-right { text-align: right; }
+        .text-center { text-align: center; }
+
+        /* Zone de Total */
+        .total-container {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .total-box {
+            display: inline-block;
+            width: 250px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .total-line {
+            font-size: 16px;
+            font-weight: bold;
+            color: #157347;
+            border-top: 2px solid #157347;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        /* Pied de page */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        .stamp {
+            margin-top: 20px;
+            border: 2px solid #157347;
+            color: #157347;
+            display: inline-block;
+            padding: 10px 20px;
+            font-weight: bold;
+            text-transform: uppercase;
+            opacity: 0.6;
+            transform: rotate(-5deg);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="company-info">
+            <p class="company-logo">AGRITECH GN</p>
+            <p>Solutions Numériques pour l'Agriculture<br>
+            Contact: +224 627 51 56 73/620 64 11 00 </p>
+        </div>
+        <div class="invoice-title">
+            <h1>FACTURE</h1>
+            <p><strong>N°:</strong> #{{ commande.id }}</p>
+            <p><strong>Date:</strong> {{ commande.date_commande|date:"d/m/Y" }}</p>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="info-box">
+            <div class="section-label">Facturé à :</div>
+            <p><strong>{{ commande.client.get_full_name|default:commande.client.username }}</strong><br>
+            {{ commande.adresse_livraison }}<br>
+            Tél: {{ commande.telephone_contact }}</p>
+        </div>
+        <div class="info-box" style="margin-left: 8%;">
+            <div class="section-label">Mode de Livraison :</div>
+            <p>Standard AgriTech<br>
+            Statut: <strong>{{ commande.get_statut_display }}</strong></p>
+        </div>
+    </div>
+
+    
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th>Désignation</th>
+                <th class="text-center">Quantité</th>
+                <th class="text-right">Prix Unitaire</th>
+                <th class="text-right">Sous-Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ligne in commande.lignes.all %}
+            <tr>
+                <td>{{ ligne.produit.nom }}</td>
+                <td class="text-center">{{ ligne.quantite }}</td>
+                <td class="text-right">{{ ligne.prix_unitaire|floatformat:0 }} GNF</td>
+                <td class="text-right">{{ ligne.get_total|floatformat:0 }} GNF</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="total-container">
+        <div class="total-box">
+            <div style="margin-bottom: 5px;">Total Hors Taxe : {{ commande.total|floatformat:0 }} GNF</div>
+            <div style="font-size: 11px; color: #666;">TVA (0%) : 0 GNF</div>
+            <div class="total-line">
+                TOTAL GÉNÉRAL : {{ commande.total|floatformat:0 }} GNF
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>Cette facture est générée par la plateforme AgriTech GN.<br>
+        Merci pour votre achat et pour le soutien aux producteurs locaux de Guinée !</p>
+        <div class="stamp">Payée</div>
+    </div>
+
+</body>
+</html>

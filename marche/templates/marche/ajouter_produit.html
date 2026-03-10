@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container py-5">
+    <div class="card shadow border-0 rounded-4 mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-success text-white py-3">
+            <h3 class="mb-0 fw-bold">Publier un produit</h3>
+        </div>
+        <div class="card-body p-4">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Quel produit vendez-vous ?</label>
+                    <select class="form-select border-success" name="nom" required>
+                        <option value="" selected disabled>--- Choisir un produit ---</option>
+                        <optgroup label="Fruits">
+                            <option value="Mangue Kent">Mangue Kent</option>
+                            <option value="Ananas Pain de Sucre">Ananas Pain de Sucre</option>
+                            <option value="Orange de Kindia">Orange de Kindia</option>
+                            <option value="Banane Douce">Banane Douce</option>
+                        </optgroup>
+                        <optgroup label="Céréales">
+                            <option value="Riz étuvé">Riz étuvé</option>
+                            <option value="Fonio">Fonio</option>
+                            <option value="Maïs">Maïs</option>
+                        </optgroup>
+                        </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Provenance</label>
+                    <select class="form-select border-success" name="zone_production" required>
+                        <option value="" selected disabled>--- Choisir la ville ---</option>
+                        <option value="Kindia">Kindia</option>
+                        <option value="Labé">Labé</option>
+                        <option value="Kankan">Kankan</option>
+                        <option value="Mamou">Mamou</option>
+                        <option value="Boké">Boké</option>
+                        <option value="Nzérékoré">Nzérékoré</option>
+                        <option value="Faranah">Faranah</option>
+                        </select>
+                </div>
+
+                {{ form.as_p }}
+
+                <button type="submit" class="btn btn-success w-100 mt-3">Mettre en vente</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

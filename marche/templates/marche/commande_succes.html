@@ -1,0 +1,19 @@
+{% extends 'marche/index.html' %}
+{% block content %}
+<div class="container text-center my-5">
+    <div class="alert alert-success py-5 shadow">
+        <h2 class="fw-bold">Commande enregistrée avec succès ! ✅</h2>
+        <p class="lead">Votre commande a été ajoutée à notre système. Vous allez être redirigé vers WhatsApp pour finaliser avec le vendeur.</p>
+        <a href="{{ whatsapp_url }}" class="btn btn-success btn-lg px-5 mt-3">Cliquer ici si la redirection ne se lance pas</a>
+        <br><br>
+        <a href="{% url 'liste_produits' %}" class="text-muted">Retourner à l'accueil</a>
+    </div>
+</div>
+
+<script>
+    // Lance WhatsApp automatiquement après 2 secondes
+    setTimeout(function(){
+        window.location.href = "{{ whatsapp_url|safe }}";
+    }, 2000);
+</script>
+{% endblock %}

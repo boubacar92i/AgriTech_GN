@@ -1,0 +1,79 @@
+{% extends 'marche/index.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="text-center mb-4 fw-bold" style="color: #ce1126;">📊 Tableau de Bord Stratégique</h2>
+    <p class="text-center text-muted">Analyse des flux financiers et des zones de livraison</p>
+
+    <div class="d-flex justify-content-center gap-3 mb-5">
+        <a href="{% url 'liste_produits' %}" class="btn btn-success px-4 py-2 shadow-sm fw-bold">
+            <i class="bi bi-arrow-left-circle me-2"></i> Boutique Publique
+        </a>
+        
+        <a href="/admin/" class="btn btn-warning px-4 py-2 shadow-sm fw-bold border-dark text-dark">
+            <i class="bi bi-shield-lock me-2"></i> Console Technique
+        </a>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="card bg-success text-white border-0 shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-uppercase small">Total Ventes (Livrées)</h5>
+                    <h2 class="display-6 fw-bold">{{ total_gnf }} GNF</h2>
+                </div>
+            </div>
+        </div>
+        </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4 class="fw-bold mb-3"><i class="bi bi-geo-alt text-danger"></i> Zones les plus actives</h4>
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-hover bg-white mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Quartier (Conakry)</th>
+                            <th class="text-center">Commandes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for zone in zones_actives %}
+                        <tr>
+                            <td class="fw-bold">{{ zone.adresse_livraison }}</td>
+                            <td class="text-center"><span class="badge bg-primary">{{ zone.total }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="2" class="text-center">Aucune commande enregistrée.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <h4 class="fw-bold mb-3"><i class="bi bi-basket text-success"></i> Top Produits</h4>
+            <div class="table-responsive shadow-sm rounded">
+                <table class="table table-hover bg-white mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Nom du Produit</th>
+                            <th class="text-center">Ventes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in top_produits %}
+                        <tr>
+                            <td>{{ p.produit__nom }}</td>
+                            <td class="text-center"><span class="badge bg-info text-dark">{{ p.nb }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="2" class="text-center">Aucun produit vendu.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

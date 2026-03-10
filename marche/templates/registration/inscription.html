@@ -1,0 +1,23 @@
+{% extends 'marche/index.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="text-center mb-4">Devenir Vendeur sur AgriTech GN</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-success">Créer mon compte</button>
+                    </div>
+                </form>
+                <p class="mt-3 text-center">
+                    Déjà inscrit ? <a href="{% url 'login' %}">Connectez-vous ici</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
