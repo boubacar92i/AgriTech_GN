@@ -54,6 +54,11 @@
                 </div>
                 <div class="d-grid">
                     <a href="{% url 'commander' %}" class="btn btn-success btn-lg">Finaliser la commande</a>
+                    <a href="https://wa.me/224620000000?text=Bonjour%20AgriTech%20GN,%20je%20souhaite%20commander%20les%20articles%20suivants%20de%20mon%20panier.%20Montant%20total%20:%20{{ total|intcomma }}%20GNF" 
+                        target="_blank" 
+                        class="btn btn-outline-success" 
+                        style="background-color: #25D366; color: white; border: none;">
+                        <i class="bi bi-whatsapp"></i> Commander via WhatsApp</a>
                     <a href="{% url 'index' %}" class="btn btn-link text-muted mt-2">Continuer mes achats</a>
                 </div>
             </div>
