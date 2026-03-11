@@ -9,6 +9,10 @@ User = get_user_model()
 
 if not User.objects.filter(username='admin').exists():
     User.objects.create_superuser('admin', 'admin@example.com', 'Passe123')
-    print("Superuser créé avec succès !")
+    print("Succès : Compte admin créé !")
 else:
-    print("L'utilisateur existe déjà.")
+    # Si l'utilisateur existe mais que tu as oublié le mot de passe
+    user = User.objects.get(username='admin')
+    user.set_password('Passe123')
+    user.save()
+    print("Succès : Mot de passe réinitialisé !")
