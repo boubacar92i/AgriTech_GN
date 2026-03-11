@@ -90,7 +90,8 @@
                 {% if user.is_authenticated %}
                 <div id="zone-bienvenue-exclusif">
                     <i class="bi bi-person-circle"></i>
-                    <span>Bienvenue, <strong>{{ user.username }}</strong></span>
+                    <span id="greeting" style="color: #2e7d32; font-weight: bold;"></span>
+                    <span style="color: #2e7d32; font-weight: bold;">, {{ user.username }}</span>
                 </div>
                 {% endif %}
             </div>
@@ -185,6 +186,16 @@
     </div>
 
     <script>
+        const hour = new Date().getHours();
+            let greeting;
+            if (hour < 12) {
+                greeting = "Bonjour";
+            } else if (hour < 18) {
+                greeting = "Bon après-midi";
+            } else {
+                greeting = "Bonsoir";
+            }
+            document.getElementById("greeting").innerText = greeting;
         function toggleChat() {
             const win = document.getElementById('chatbot-window');
             win.style.display = (win.style.display === 'block') ? 'none' : 'block';
