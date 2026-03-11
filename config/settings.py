@@ -26,7 +26,9 @@ INSTALLED_APPS = [
 
 # --- MIDDLEWARE ---
 MIDDLEWARE = [
+    # 'django.middleware.security.SecurityMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', # Ajoute cette ligne ici
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -82,11 +84,6 @@ TIME_ZONE = 'Africa/Conakry'
 USE_I18N = True
 USE_TZ = True
 
-# --- FICHIERS STATIQUES (CSS, JS) ---
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 
 # --- REDIRECTIONS ---
 LOGIN_REDIRECT_URL = 'dashboard_agri'
@@ -107,3 +104,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # --- FICHIERS MÉDIA (IMAGES PRODUITS) ---
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+# --- FICHIERS STATIQUES (CSS, JS) ---
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
