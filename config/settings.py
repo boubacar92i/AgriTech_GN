@@ -7,7 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # --- SÉCURITÉ ---
 SECRET_KEY = 'django-insecure-s!vs6e+fa_dx&_q5-z_htirvvm0^)!nr&7_6sr0gs#-s0r++#6'
 DEBUG = True
-ALLOWED_HOSTS = ['10.255.231.180', 'localhost', '127.0.0.1',]
+ALLOWED_HOSTS = [
+                 'agritech-gn.onrender.com', 'localhost', '127.0.0.1'
+                 ]
 
 # --- APPLICATIONS ---
 INSTALLED_APPS = [
